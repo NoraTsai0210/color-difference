@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        section {
+            width: 100%;
+            height: 100vh;
+            background-color: #dd7676;
+            display: flex;
+
+        }
+
+        .homepage {
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .play-game{
+            position: relative;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        p {
+            font-size: 20px;
+        }
+
+        .btn {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+
+        button {
+            height: 40px;
+            background-color: rgb(173, 214, 221);
+            font-size: 18px;
+            color: green;
+            border: none;
+        }
+
+        .start-btn,
+        .continue-btn {
+            width: 150px;
+            margin: 10px;
+        }
+
+        .logo {
+            margin-top: 40px;
+            width: 500px;
+            height: 415px;
+            text-align: right;
+
+        }
+
+        .logo img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        nav {
+            width: 200px;
+            /* padding-left: 200px ; */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+
+        }
+
+        .time-area {
+            /* margin: 0 auto; */
+            /* display: flex;
+        flex-direction: row; */
+            align-items: center;
+            font-size: 30px;
+
+        }
+
+        .stop-btn {
+            width: 130px;
+            height: 50px;
+            margin-top: 20px;
+            margin-left: 30px;
+            font-size: 25px;
+            background-color: rgba(172, 176, 180, 0.868);
+            color: aliceblue;
+            right: 0;
+        }
+
+        .score-area {
+            /* margin: 0 auto; */
+            /* display: flex;
+        flex-direction: row; */
+            margin-top: 100px;
+            align-items: center;
+            font-size: 30px;
+
+        }
+
+        .time,
+        .score {
+            width: 100px;
+            height: 50px;
+            margin-top: 10px;
+            background-color: wheat;
+            text-align: center;
+            line-height: 50px;
+            border-radius: 5px;
+
+        }
+
+        .now{
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 330px;
+            /* height: 50px; */
+            font-size: 25px;
+            color: darkgrey;
+            text-align: center;
+            background-color: black;
+            padding: 6px;
+        }
+
+        .all {
+            width: 500px;
+            height: 500px;
+            margin: auto;
+            padding: 10px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            width: 50%;
+            height: 50%;
+            background-color: blue;
+            border: 10px solid white;
+            border-radius: 20px;
+        }
+
+        /* .answer-box {
+            opacity: 0.5;
+        } */
+
+        /* .bg-boxes{
+            background-image: url();
+            background-position: center;
+            background-size: cover;
+        } */
+
+        .none {
+            display: none;
+        }
+
+
+    </style>
+
+    
+</head>
+
+<body>
+    <section class="homepage">
+        <div>
+            <h1>色彩識別度測驗</h1>
+            <p> 在30秒內,找出所有色塊中顏色不同的一個</p>
+            <p>Click on the tile that has a different color</p>
+        </div>
+        <div class="btn">
+            <button class="start-btn">開始答題</button>
+            <button class="continue-btn none">繼續</button>
+        </div>
+        <div class="logo">
+            <img src="./img/5995A008-B68B-4685-A072-98E89B541356.jpeg" alt="">
+            <span>by Nora</span>
+        </div>
+    </section>
+    <section class="play-game none">
+        <nav>
+            <div class="time-area">
+                <span>Time:</span>
+                <div class="time">30</div>
+            </div>
+            <!-- <button class="start-btn">開始</button> -->
+            <button class="stop-btn">暫停</button>
+            <!-- <button class="continue-btn">繼續</button> -->
+            <div class="score-area">
+                <span>Score:</span>
+                <div class="score">0</div>
+            </div>
+        </nav>
+        <div class="now"></div>
+        <div class="all"></div>
+
+    </section>
+
+    <script>
+        // 任務
+        // Level l:色弱測驗過第一關
+        // Level 2:過第二關
+        // Level 3:過第三關
+        // Level 4:一直玩下去,至少玩10關
+        // Level 5:非常完整(不包含程式碼完美)
+        const c = 256;
+        let level = 2; //一開始是第二關
+        let count = 0;
+        let totalRight = 0; //全部答對
+        const boxAll = document.querySelector('.all');
+        let score = document.querySelector('.score');
+
+        // const today = new Date();
+
+        // let currentDateTime =
+        //     today.getFullYear() +'年' +
+        //     (today.getMonth() + 1) + '月' +
+        //     today.getDate() + '日 \xa0\xa0' +
+        //     today.getHours() + ':' + today.getMinutes();
+        // console.log(currentDateTime);
+        // let now = document.querySelector('.now')
+        // now.innerHTML = currentDateTime; 
+
+        function nowTime(){
+        const today = new Date()
+        const hour  = today.getHours()
+        const min   = today.getMinutes()
+        const sec   = today.getSeconds()
+
+        // 轉成字串，如果低於10，前面加上'0'
+        const hourString = ( hour < 10)? ('0'+ hour) : ('' + hour)
+        const minString = ( min < 10)? ('0'+ min) : ('' + min)
+        const secString = ( sec < 10)? ('0'+ sec) : ('' + sec)
+
+        let now = document.querySelector('.now')
+        now.innerHTML = today.getFullYear() +'年'
+        +(today.getMonth() + 1) + '月'
+        +today.getDate() + '日 \xa0\xa0'+hourString + ':' + minString + ':' + secString;
+        }
+
+        //重覆每秒執行
+        setInterval(nowTime ,1000)
+
+
+
+        game();
+        function game() {
+            let size = 100 / level;
+            let color = `rgb(${Math.floor(Math.random() * c)},${Math.floor(Math.random() * c)},${Math.floor(Math.random() * c)})`;
+
+            boxAll.innerHTML = ''; //清空
+            for (let i = 0; i < level ** 2; i++) {
+                boxAll.innerHTML += `<div class="box" style="width:${size}%; height:${size}%; background-color: ${color};"></div>`;
+            }
+
+            answer = Math.floor(Math.random() * level ** 2) + 1;
+            let answerBox = document.querySelector(`.all .box:nth-child(${answer})`);
+            answerBox.style.opacity = `${0.5 + level * 0.01}`;
+
+            let notAnswerBox = document.querySelectorAll(`.all .box:not(:nth-child(${answer}))`); //找到不是答案的
+            console.log(notAnswerBox);
+            notAnswerBox.forEach(function (box) {
+                box.addEventListener('click', function () {
+                    alert("答錯啦~再仔細找找")
+                });
+            })
+
+
+            answerBox.addEventListener('click', function () { //將答案盒子設置監聽事件=>如果被按了就會知道是答案
+                count++;
+                totalRight++;
+                //totalRightText.innerHTML =  totalRight;
+                if (count == level) { //由答對次數來決定是否進入下一關;當答對次數==level時
+                    level++; //答對了答案+1次
+                    count = 0;
+                }
+
+                if (count > 20) {
+                    alert('已完成所有關卡,再來一次!');
+                    notAnswerBox;
+                    level = 2;
+                    count = 0;
+                }
+                // alert("我是答案!");
+                //============================
+                game();
+                //============================
+            });
+            score.innerHTML = totalRight;
+        }
+
+
+        const homepage = document.querySelector('.homepage');
+        const play_game = document.querySelector('.play-game');
+        const start_btn = document.querySelector('.start-btn');
+        const stop_btn = document.querySelector('.stop-btn');
+        const continue_btn = document.querySelector('.continue-btn');
+
+        const thetime = 30; //倒數計時時間
+        let timeS = document.querySelector('.time');
+        let timeId; //計數器的ID=>用來記錄計時器
+
+        // 時間計時=>setInterval(function(){}, 1000);
+        // 每1000毫秒(ms)=1秒就去執行function的功能
+        // let i=0;
+        // setInterval(function)
+
+        function countdown() { //倒數計時的函數
+            //計數器
+            clearInterval(timeId); //清除計數器
+            timeId = setInterval(function () {
+                if (time == 0) {
+                    alert('時間到!');
+                    homepage.classList.remove('none'); //顯示首頁
+                    play_game.classList.add('none');//隱藏遊戲頁面
+                    continue_btn.classList.add('none'); //隱藏繼續按鈕
+                    start_btn.innerHTML = '再玩一次';
+                    clearInterval(timeId); //清除計數器
+
+                    // boxAll.innerHTML = '時間到!';
+                    // boxAll.classList.add('bg-boxes')
+                } else {
+                    time--;
+                    timeS.innerHTML = time;
+                }
+            }, 1000);
+        };
+
+
+
+
+
+        start_btn.addEventListener('click', function () {
+            // boxAll.classList.remove('all'); 清除掉某一個CSS class
+            homepage.classList.add('none'); //隱藏首頁
+            play_game.classList.remove('none'); //顯示遊戲首頁
+            continue_btn.classList.add('none'); //隱藏繼續按鈕
+            start_btn.innerHTML = '放棄重玩';
+
+            time = thetime;
+            timeS.innerHTML = time;
+            alert("時間將從30秒開始計時!");
+
+            countdown();
+            game();
+        });
+        stop_btn.addEventListener('click', function () {
+
+            homepage.classList.remove('none'); //顯示首頁
+            play_game.classList.add('none'); //隱藏遊戲首頁
+            continue_btn.classList.remove('none'); //顯示繼續按鈕
+
+            clearInterval(timeId); //清除計數器
+        });
+        continue_btn.addEventListener('click', function () {
+
+            homepage.classList.add('none'); //隱藏首頁
+            play_game.classList.remove('none'); //顯示遊戲首頁
+
+            countdown(); //繼續計時
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>
